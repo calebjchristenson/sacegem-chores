@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Chores">
+<title>Family Chores</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<!-- Favicon: navy shield with CHORES -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4,4 L28,4 L28,20 Q28,29 16,32 Q4,29 4,20 Z' fill='%231a2744'/%3E%3Cpath d='M4,4 L28,4 L28,10 L4,10 Z' fill='%230a1020'/%3E%3Crect x='13' y='12' width='2' height='14' rx='1' fill='%23C9A84C'/%3E%3Crect x='8' y='16' width='16' height='2' rx='1' fill='%23C9A84C'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f5f5f4;--bg3:#eeede9;
+  --text:#1a1a18;--text2:#5f5e5a;--text3:#888780;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+  --radius:12px;--radius-sm:8px;
+  --grace-bg:#EAF3DE;--grace-text:#3B6D11;--grace-acc:#639922;
+  --maddie-bg:#E6F1FB;--maddie-text:#185FA5;--maddie-acc:#378ADD;
+  --emily-bg:#FAEEDA;--emily-text:#854F0B;--emily-acc:#EF9F27;
+  --caleb-bg:#EEEDFE;--caleb-text:#3C3489;--caleb-acc:#7F77DD;
+  --stacey-bg:#FBEAF0;--stacey-text:#72243E;--stacey-acc:#D4537E;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;
+    --text:#f0efe9;--text2:#b4b2a9;--text3:#888780;
+    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+    --grace-bg:#1a2e0f;--grace-text:#97C459;--grace-acc:#639922;
+    --maddie-bg:#0d2240;--maddie-text:#85B7EB;--maddie-acc:#378ADD;
+    --emily-bg:#2e1f06;--emily-text:#FAC775;--emily-acc:#EF9F27;
+    --caleb-bg:#1a1840;--caleb-text:#AFA9EC;--caleb-acc:#7F77DD;
+    --stacey-bg:#2a0f1a;--stacey-text:#ED93B1;--stacey-acc:#D4537E;
+  }
+}
+html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+.shell{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg);box-shadow:0 0 0 0.5px var(--border)}
+.app-header{padding:env(safe-area-inset-top,12px) 1.25rem 0.75rem;border-bottom:0.5px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:10}
+.app-header h1{font-size:20px;font-weight:600;display:flex;align-items:center;gap:8px}
+.tabs{display:flex;gap:6px;padding:0.75rem 1.25rem;overflow-x:auto;scrollbar-width:none;border-bottom:0.5px solid var(--border)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:7px 18px;border-radius:999px;border:1.5px solid var(--border2);font-size:14px;font-weight:500;cursor:pointer;background:var(--bg);color:var(--text2);transition:background .15s,color .15s,border-color .15s}
+.tab[data-p="Grace"].active {background:var(--grace-bg);color:var(--grace-text);border-color:var(--grace-acc)}
+.tab[data-p="Maddie"].active{background:var(--maddie-bg);color:var(--maddie-text);border-color:var(--maddie-acc)}
+.tab[data-p="Emily"].active {background:var(--emily-bg);color:var(--emily-text);border-color:var(--emily-acc)}
+.tab[data-p="Caleb"].active {background:var(--caleb-bg);color:var(--caleb-text);border-color:var(--caleb-acc)}
+.tab[data-p="Stacey"].active{background:var(--stacey-bg);color:var(--stacey-text);border-color:var(--stacey-acc)}
+.day-nav{display:flex;align-items:center;padding:0.6rem 0.75rem;border-bottom:0.5px solid var(--border);background:var(--bg)}
+.nav-arrow{width:36px;height:36px;border-radius:50%;border:0.5px solid var(--border2);background:var(--bg);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:background .12s}
+.nav-arrow:active{background:var(--bg2)}
+.day-strip{flex:1;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:0 8px}
+.day-strip::-webkit-scrollbar{display:none}
+.day-pill{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 10px;border-radius:var(--radius-sm);border:0.5px solid transparent;cursor:pointer;transition:background .12s,border-color .12s;min-width:44px}
+.day-pill:active{background:var(--bg2)}
+.day-pill .pill-dow{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em}
+.day-pill .pill-date{font-size:14px;font-weight:500;color:var(--text2)}
+.day-pill.today .pill-date{color:var(--text)}
+.day-pill.today .pill-dow{color:var(--text2)}
+.day-pill.selected{border-color:var(--acc,var(--border2));background:var(--acc-bg,var(--bg2))}
+.day-pill.selected .pill-date{color:var(--acc-text,var(--text));font-weight:600}
+.day-pill.selected .pill-dow{color:var(--acc-text,var(--text2))}
+.dot-row{display:flex;gap:2px;justify-content:center;margin-top:2px;min-height:5px}
+.dot{width:4px;height:4px;border-radius:50%}
+.progress-wrap{padding:0.75rem 1.25rem 0.5rem}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-label{font-size:13px;color:var(--text2)}
+.progress-count{font-size:13px;font-weight:500;color:var(--text)}
+.progress-track{height:6px;background:var(--bg3);border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;border-radius:999px;transition:width .35s ease;width:0%}
+.fill-Grace {background:var(--grace-acc)}
+.fill-Maddie{background:var(--maddie-acc)}
+.fill-Emily {background:var(--emily-acc)}
+.fill-Caleb {background:var(--caleb-acc)}
+.fill-Stacey{background:var(--stacey-acc)}
+.content{flex:1;padding:0 1.25rem 2rem;overflow-y:auto}
+.section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin:1.25rem 0 0.5rem}
+.chore-item{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:var(--radius-sm);border:0.5px solid var(--border);margin-bottom:7px;background:var(--bg);cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent;user-select:none}
+.chore-item:active{background:var(--bg2);transform:scale(0.99)}
+.chore-item.done{opacity:.45}
+.chore-item.done .chore-name{text-decoration:line-through}
+.cb-ring{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.cb-ring i{font-size:14px;color:#fff;display:none}
+.chore-item.done .cb-ring i{display:block}
+.chore-item.done .cb-ring{border-color:transparent}
+.done-Grace  .cb-ring{background:var(--grace-acc)}
+.done-Maddie .cb-ring{background:var(--maddie-acc)}
+.done-Emily  .cb-ring{background:var(--emily-acc)}
+.done-Caleb  .cb-ring{background:var(--caleb-acc)}
+.done-Stacey .cb-ring{background:var(--stacey-acc)}
+.chore-name{font-size:15px;color:var(--text);flex:1;line-height:1.4}
+.chore-freq{font-size:12px;color:var(--text3);white-space:nowrap}
+.empty-state{text-align:center;padding:4rem 1rem 2rem}
+.empty-state i{font-size:40px;color:var(--text3);display:block;margin-bottom:12px}
+.empty-state p{font-size:16px;color:var(--text2)}
+.all-done{text-align:center;padding:3rem 1rem 2rem}
+.all-done .trophy{font-size:48px;display:block;margin-bottom:12px}
+.all-done h2{font-size:20px;font-weight:600;margin-bottom:6px}
+.all-done p{font-size:14px;color:var(--text2)}
+.future-tag{font-size:11px;background:var(--bg2);color:var(--text3);border-radius:4px;padding:2px 6px;margin-left:4px}
+
+/* Footer with crest */
+.footer{border-top:0.5px solid var(--border);background:var(--bg);padding-bottom:env(safe-area-inset-bottom,0)}
+.footer-bar{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 1.25rem}
+.week-badge{font-size:12px;font-weight:500;padding:4px 10px;border-radius:var(--radius-sm);background:var(--bg2);color:var(--text2)}
+.reset-btn{font-size:13px;color:var(--text3);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;padding:4px 0}
+.reset-btn:active{color:var(--text2)}
+.crest-footer{display:flex;flex-direction:column;align-items:center;padding:0.5rem 1rem 1rem;border-top:0.5px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.crest-mini{width:56px;height:auto;opacity:0.85;transition:opacity .15s}
+.crest-footer:active .crest-mini{opacity:1}
+.crest-family-name{font-size:10px;letter-spacing:2px;color:var(--text3);margin-top:4px;font-family:Georgia,serif}
+
+/* Crest modal */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center}
+.modal-backdrop.open{display:flex}
+.modal-box{background:var(--bg);border-radius:var(--radius);max-width:360px;width:90%;padding:1.25rem;position:relative;max-height:90dvh;overflow-y:auto}
+.modal-close{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;border:0.5px solid var(--border2);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text2)}
+.modal-crest{width:100%;max-width:280px;display:block;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="app-header">
+    <h1><i class="ti ti-home" aria-hidden="true"></i> Family chores</h1>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-p="Grace"  role="tab">Grace</button>
+    <button class="tab"        data-p="Maddie" role="tab">Maddie</button>
+    <button class="tab"        data-p="Emily"  role="tab">Emily</button>
+    <button class="tab"        data-p="Caleb"  role="tab">Caleb</button>
+    <button class="tab"        data-p="Stacey" role="tab">Stacey</button>
+  </div>
+
+  <div class="day-nav">
+    <button class="nav-arrow" onclick="shiftDay(-1)" aria-label="Previous day"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+    <div class="day-strip" id="day-strip"></div>
+    <button class="nav-arrow" onclick="shiftDay(1)"  aria-label="Next day"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-row">
+      <span class="progress-label" id="prog-label"></span>
+      <span class="progress-count" id="prog-count"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+
+  <div class="content" id="content"></div>
+
+  <div class="footer">
+    <div class="footer-bar">
+      <span class="week-badge" id="week-badge"></span>
+      <button class="reset-btn" onclick="resetDay()"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
+    </div>
+    <div class="crest-footer" onclick="document.getElementById('crest-modal').classList.add('open')" role="button" aria-label="View family crest">
+      <!-- Mini crest SVG -->
+      <svg class="crest-mini" viewBox="0 0 500 570" xmlns="http://www.w3.org/2000/svg">
+        <defs><clipPath id="sc2"><path d="M100,60 L400,60 L400,340 Q400,460 250,525 Q100,460 100,340 Z"/></clipPath></defs>
+        <path d="M100,60 L400,60 L400,340 Q400,460 250,525 Q100,460 100,340 Z" fill="#1a2744"/>
+        <rect x="100" y="60"  width="150" height="230" fill="#1a2744" clip-path="url(#sc2)"/>
+        <rect x="250" y="60"  width="150" height="230" fill="#0d1530" clip-path="url(#sc2)"/>
+        <rect x="100" y="290" width="150" height="235" fill="#0d1530" clip-path="url(#sc2)"/>
+        <rect x="250" y="290" width="150" height="235" fill="#1a2744" clip-path="url(#sc2)"/>
+        <line x1="250" y1="118" x2="250" y2="522" stroke="#C9A84C" stroke-width="3" clip-path="url(#sc2)"/>
+        <line x1="108" y1="290" x2="392" y2="290" stroke="#C9A84C" stroke-width="3" clip-path="url(#sc2)"/>
+        <path d="M100,60 L400,60 L400,118 L100,118 Z" fill="#0a1020"/>
+        <text x="250" y="105" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#C9A84C" letter-spacing="11">SACGEM</text>
+        <g clip-path="url(#sc2)">
+          <rect x="155" y="135" width="22" height="138" rx="2" fill="#C9A84C"/>
+          <rect x="111" y="180" width="110" height="22" rx="2" fill="#C9A84C"/>
+        </g>
+        <g clip-path="url(#sc2)">
+          <path d="M285,278 L295,218 L385,218 L395,278 Z" fill="#8B6010"/>
+          <rect x="290" y="198" width="100" height="24" rx="4" fill="#5a3a08"/>
+          <path d="M282,200 Q288,152 308,162 Q314,138 330,148 Q338,128 350,138 Q360,122 372,135 Q386,128 396,155 Q410,175 405,200 Z" fill="#C9A84C"/>
+          <circle cx="348" cy="129" r="11" fill="#8B1010" stroke="#C9A84C" stroke-width="1.5"/>
+        </g>
+        <g clip-path="url(#sc2)">
+          <path d="M115,490 Q82,450 88,408 Q92,375 108,355 Q125,335 142,345 Q155,355 150,372 Q162,355 168,368 Q155,378 148,395 Q165,382 170,400 Q155,410 148,428 Q158,418 162,432 Q148,442 138,460 Q128,472 118,490 Z" fill="#8B6010" stroke="#C9A84C" stroke-width="1.2"/>
+          <ellipse cx="175" cy="430" rx="42" ry="34" fill="#C9A84C"/>
+          <circle cx="195" cy="390" r="28" fill="#C9A84C"/>
+          <circle cx="205" cy="387" r="6" fill="#0a1020"/>
+          <ellipse cx="175" cy="457" rx="12" ry="9" fill="#8B6010"/>
+          <ellipse cx="175" cy="449" rx="14" ry="7" fill="#5a3808"/>
+        </g>
+        <g clip-path="url(#sc2)">
+          <ellipse cx="332" cy="430" rx="58" ry="38" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+          <ellipse cx="318" cy="418" rx="16" ry="12" fill="#1a2744" opacity="0.55"/>
+          <ellipse cx="350" cy="440" rx="12" ry="9" fill="#1a2744" opacity="0.45"/>
+          <circle cx="390" cy="400" r="28" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+          <ellipse cx="404" cy="410" rx="14" ry="11" fill="#e8c0b0"/>
+          <circle cx="383" cy="396" r="7" fill="#0a1020"/>
+          <rect x="308" y="462" width="16" height="20" rx="7" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+          <rect x="340" y="462" width="16" height="20" rx="7" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+        </g>
+        <path d="M100,60 L400,60 L400,340 Q400,460 250,525 Q100,460 100,340 Z" fill="none" stroke="#C9A84C" stroke-width="5"/>
+        <path d="M100,60 L400,60 L400,118 L100,118 Z" fill="none" stroke="#C9A84C" stroke-width="4"/>
+        <circle cx="250" cy="290" r="24" fill="#0a1020" stroke="#C9A84C" stroke-width="2.5"/>
+        <circle cx="250" cy="290" r="16" fill="none" stroke="#C9A84C" stroke-width="1"/>
+        <text x="250" y="296" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#C9A84C">✦</text>
+        <g fill="none" stroke-linecap="round">
+          <path d="M92,155 Q68,230 62,320" stroke="#3B6D11" stroke-width="2"/>
+          <ellipse cx="71" cy="212" rx="16" ry="7" transform="rotate(-48,71,212)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+          <ellipse cx="63" cy="285" rx="16" ry="7" transform="rotate(-22,63,285)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+          <path d="M408,155 Q432,230 438,320" stroke="#3B6D11" stroke-width="2"/>
+          <ellipse cx="429" cy="212" rx="16" ry="7" transform="rotate(48,429,212)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+          <ellipse cx="437" cy="285" rx="16" ry="7" transform="rotate(22,437,285)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        </g>
+        <rect x="77" y="524" width="346" height="26" fill="#C9A84C"/>
+        <text x="250" y="541" text-anchor="middle" font-family="Georgia,serif" font-size="12.5" font-weight="700" fill="#0a1020" letter-spacing="1.5">Stacey · Caleb · Grace · Emily · Maddie</text>
+      </svg>
+      <span class="crest-family-name">SACGEM</span>
+    </div>
+  </div>
+</div>
+
+<!-- Full crest modal -->
+<div class="modal-backdrop" id="crest-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('crest-modal').classList.remove('open')" aria-label="Close"><i class="ti ti-x" aria-hidden="true"></i></button>
+    <svg class="modal-crest" viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg">
+      <defs><clipPath id="sc3"><path d="M100,60 L400,60 L400,340 Q400,460 250,525 Q100,460 100,340 Z"/></clipPath></defs>
+      <path d="M100,60 L400,60 L400,340 Q400,460 250,525 Q100,460 100,340 Z" fill="#1a2744"/>
+      <rect x="100" y="60"  width="150" height="230" fill="#1a2744" clip-path="url(#sc3)"/>
+      <rect x="250" y="60"  width="150" height="230" fill="#0d1530" clip-path="url(#sc3)"/>
+      <rect x="100" y="290" width="150" height="235" fill="#0d1530" clip-path="url(#sc3)"/>
+      <rect x="250" y="290" width="150" height="235" fill="#1a2744" clip-path="url(#sc3)"/>
+      <g clip-path="url(#sc3)" stroke="#C9A84C" stroke-width="0.3" opacity="0.15">
+        <line x1="100" y1="90" x2="250" y2="90"/><line x1="100" y1="120" x2="250" y2="120"/>
+        <line x1="100" y1="150" x2="250" y2="150"/><line x1="100" y1="180" x2="250" y2="180"/>
+        <line x1="100" y1="210" x2="250" y2="210"/><line x1="100" y1="240" x2="250" y2="240"/>
+        <line x1="100" y1="270" x2="250" y2="270"/><line x1="100" y1="320" x2="250" y2="320"/>
+        <line x1="100" y1="350" x2="250" y2="350"/><line x1="100" y1="380" x2="250" y2="380"/>
+        <line x1="100" y1="410" x2="250" y2="410"/>
+        <line x1="250" y1="90" x2="400" y2="90"/><line x1="250" y1="120" x2="400" y2="120"/>
+        <line x1="250" y1="150" x2="400" y2="150"/><line x1="250" y1="180" x2="400" y2="180"/>
+        <line x1="250" y1="210" x2="400" y2="210"/><line x1="250" y1="240" x2="400" y2="240"/>
+      </g>
+      <line x1="250" y1="118" x2="250" y2="522" stroke="#C9A84C" stroke-width="3" clip-path="url(#sc3)"/>
+      <line x1="108" y1="290" x2="392" y2="290" stroke="#C9A84C" stroke-width="3" clip-path="url(#sc3)"/>
+      <path d="M100,60 L400,60 L400,118 L100,118 Z" fill="#0a1020"/>
+      <path d="M108,68 L392,68 L392,118 L108,118 Z" fill="none" stroke="#C9A84C" stroke-width="1"/>
+      <text x="250" y="105" text-anchor="middle" font-family="Palatino Linotype,Palatino,Georgia,serif" font-size="30" font-weight="700" fill="#C9A84C" letter-spacing="11">SACGEM</text>
+      <!-- Cross -->
+      <g clip-path="url(#sc3)">
+        <rect x="155" y="135" width="22" height="138" rx="2" fill="#C9A84C"/>
+        <rect x="111" y="180" width="110" height="22" rx="2" fill="#C9A84C"/>
+      </g>
+      <!-- Cupcake -->
+      <g clip-path="url(#sc3)">
+        <path d="M285,278 L295,218 L385,218 L395,278 Z" fill="#8B6010"/>
+        <line x1="308" y1="218" x2="303" y2="278" stroke="#C9A84C" stroke-width="1.2" opacity="0.5"/>
+        <line x1="320" y1="218" x2="318" y2="278" stroke="#C9A84C" stroke-width="1.2" opacity="0.5"/>
+        <line x1="340" y1="218" x2="340" y2="278" stroke="#C9A84C" stroke-width="1.2" opacity="0.5"/>
+        <line x1="360" y1="218" x2="362" y2="278" stroke="#C9A84C" stroke-width="1.2" opacity="0.5"/>
+        <line x1="372" y1="218" x2="377" y2="278" stroke="#C9A84C" stroke-width="1.2" opacity="0.5"/>
+        <rect x="290" y="198" width="100" height="24" rx="4" fill="#5a3a08"/>
+        <rect x="290" y="198" width="100" height="24" rx="4" fill="none" stroke="#C9A84C" stroke-width="1"/>
+        <path d="M282,200 Q288,152 308,162 Q314,138 330,148 Q338,128 350,138 Q360,122 372,135 Q386,128 396,155 Q410,175 405,200 Z" fill="#C9A84C"/>
+        <path d="M295,185 Q305,162 318,170" fill="none" stroke="#8B6010" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+        <path d="M340,152 Q350,136 362,144" fill="none" stroke="#8B6010" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+        <path d="M372,148 Q381,138 388,150" fill="none" stroke="#8B6010" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+        <path d="M282,200 Q288,152 308,162 Q314,138 330,148 Q338,128 350,138 Q360,122 372,135 Q386,128 396,155 Q410,175 405,200" fill="none" stroke="#8B6010" stroke-width="1.5"/>
+        <rect x="308" y="178" width="8" height="3" rx="1.5" fill="#1a2744" transform="rotate(-30,312,179)"/>
+        <rect x="326" y="168" width="8" height="3" rx="1.5" fill="#8B1010" transform="rotate(20,330,169)"/>
+        <rect x="348" y="162" width="8" height="3" rx="1.5" fill="#1a2744" transform="rotate(-15,352,163)"/>
+        <rect x="366" y="170" width="8" height="3" rx="1.5" fill="#8B1010" transform="rotate(35,370,171)"/>
+        <rect x="380" y="183" width="8" height="3" rx="1.5" fill="#1a2744" transform="rotate(-25,384,184)"/>
+        <line x1="348" y1="128" x2="355" y2="118" stroke="#3B6D11" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="348" cy="129" r="11" fill="#8B1010" stroke="#C9A84C" stroke-width="1.5"/>
+        <ellipse cx="344" cy="125" rx="3" ry="4" fill="#c04040" opacity="0.5"/>
+      </g>
+      <!-- Squirrel -->
+      <g clip-path="url(#sc3)">
+        <path d="M115,490 Q82,450 88,408 Q92,375 108,355 Q125,335 142,345 Q155,355 150,372 Q162,355 168,368 Q155,378 148,395 Q165,382 170,400 Q155,410 148,428 Q158,418 162,432 Q148,442 138,460 Q128,472 118,490 Z" fill="#8B6010" stroke="#C9A84C" stroke-width="1.2"/>
+        <path d="M103,370 Q116,345 136,352 Q145,365 142,382 Q152,368 160,378 Q148,390 142,408" fill="none" stroke="#C9A84C" stroke-width="1.2" opacity="0.6" stroke-linecap="round"/>
+        <ellipse cx="175" cy="430" rx="42" ry="34" fill="#C9A84C"/>
+        <circle cx="195" cy="390" r="28" fill="#C9A84C"/>
+        <path d="M178,368 Q170,348 183,354 Q188,360 185,368 Z" fill="#C9A84C" stroke="#8B6010" stroke-width="1"/>
+        <path d="M179,368 Q174,354 181,357 Z" fill="#8B6010"/>
+        <path d="M202,365 Q208,345 215,352 Q212,360 207,366 Z" fill="#C9A84C" stroke="#8B6010" stroke-width="1"/>
+        <path d="M206,365 Q210,350 213,354 Z" fill="#8B6010"/>
+        <circle cx="205" cy="387" r="6" fill="#0a1020"/>
+        <circle cx="203" cy="385" r="2.5" fill="white"/>
+        <circle cx="207" cy="391" r="2" fill="#3a2a10"/>
+        <ellipse cx="215" cy="398" rx="5" ry="3.5" fill="#8B6010"/>
+        <ellipse cx="215" cy="397" rx="3" ry="2" fill="#a07828"/>
+        <line x1="220" y1="396" x2="240" y2="392" stroke="#C9A84C" stroke-width="0.8" opacity="0.7"/>
+        <line x1="220" y1="400" x2="240" y2="400" stroke="#C9A84C" stroke-width="0.8" opacity="0.7"/>
+        <line x1="220" y1="398" x2="240" y2="404" stroke="#C9A84C" stroke-width="0.8" opacity="0.7"/>
+        <path d="M212,403 Q215,407 218,403" fill="none" stroke="#8B6010" stroke-width="1.2" stroke-linecap="round"/>
+        <ellipse cx="175" cy="432" rx="22" ry="20" fill="#e8c870" opacity="0.4"/>
+        <ellipse cx="158" cy="452" rx="10" ry="7" fill="#8B6010"/>
+        <ellipse cx="192" cy="452" rx="10" ry="7" fill="#8B6010"/>
+        <ellipse cx="175" cy="457" rx="12" ry="9" fill="#8B6010"/>
+        <ellipse cx="175" cy="449" rx="14" ry="7" fill="#5a3808" stroke="#C9A84C" stroke-width="0.8"/>
+        <line x1="175" y1="442" x2="178" y2="436" stroke="#3B6D11" stroke-width="2" stroke-linecap="round"/>
+        <ellipse cx="148" cy="462" rx="14" ry="8" fill="#8B6010" transform="rotate(-20,148,462)"/>
+        <ellipse cx="202" cy="462" rx="14" ry="8" fill="#8B6010" transform="rotate(20,202,462)"/>
+      </g>
+      <!-- Baby cow -->
+      <g clip-path="url(#sc3)">
+        <ellipse cx="332" cy="430" rx="58" ry="38" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+        <ellipse cx="318" cy="418" rx="16" ry="12" fill="#1a2744" opacity="0.55"/>
+        <ellipse cx="350" cy="440" rx="12" ry="9" fill="#1a2744" opacity="0.45"/>
+        <ellipse cx="302" cy="438" rx="9" ry="7" fill="#1a2744" opacity="0.4"/>
+        <ellipse cx="328" cy="464" rx="18" ry="10" fill="#e8b0a0" stroke="#C9A84C" stroke-width="0.8"/>
+        <line x1="320" y1="465" x2="319" y2="475" stroke="#e8b0a0" stroke-width="3" stroke-linecap="round"/>
+        <line x1="328" y1="467" x2="327" y2="477" stroke="#e8b0a0" stroke-width="3" stroke-linecap="round"/>
+        <line x1="336" y1="465" x2="335" y2="475" stroke="#e8b0a0" stroke-width="3" stroke-linecap="round"/>
+        <path d="M370,405 Q385,395 390,400 Q395,415 382,420 Q376,420 370,418 Z" fill="#f2f0e8"/>
+        <circle cx="390" cy="400" r="28" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+        <ellipse cx="385" cy="392" rx="9" ry="7" fill="#1a2744" opacity="0.4"/>
+        <ellipse cx="404" cy="410" rx="14" ry="11" fill="#e8c0b0" stroke="#C9A84C" stroke-width="0.8"/>
+        <circle cx="399" cy="412" r="3.5" fill="#c49090"/>
+        <circle cx="409" cy="412" r="3.5" fill="#c49090"/>
+        <circle cx="383" cy="396" r="7" fill="#0a1020"/>
+        <circle cx="381" cy="394" r="3" fill="white"/>
+        <circle cx="382" cy="394" r="1.5" fill="#0a1020"/>
+        <line x1="377" y1="390" x2="374" y2="385" stroke="#0a1020" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="382" y1="389" x2="381" y2="384" stroke="#0a1020" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="387" y1="390" x2="388" y2="385" stroke="#0a1020" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M370,377 Q360,360 373,366 Q378,371 374,378 Z" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+        <path d="M403,374 Q412,358 417,366 Q415,373 409,377 Z" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+        <path d="M374,372 Q367,360 374,365" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M398,370 Q405,358 399,363" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="284" y="462" width="16" height="28" rx="7" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+        <rect x="308" y="462" width="16" height="28" rx="7" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+        <rect x="340" y="462" width="16" height="28" rx="7" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+        <rect x="364" y="462" width="16" height="28" rx="7" fill="#f2f0e8" stroke="#C9A84C" stroke-width="1"/>
+        <rect x="284" y="483" width="16" height="7" rx="3" fill="#8B6010"/>
+        <rect x="308" y="483" width="16" height="7" rx="3" fill="#8B6010"/>
+        <rect x="340" y="483" width="16" height="7" rx="3" fill="#8B6010"/>
+        <rect x="364" y="483" width="16" height="7" rx="3" fill="#8B6010"/>
+        <path d="M275,430 Q255,415 262,398 Q268,386 278,398" fill="none" stroke="#f2f0e8" stroke-width="4" stroke-linecap="round"/>
+        <path d="M276,397 Q280,388 285,395 Q282,400 276,397 Z" fill="#f2f0e8"/>
+      </g>
+      <!-- Shield border top layer -->
+      <path d="M100,60 L400,60 L400,340 Q400,460 250,525 Q100,460 100,340 Z" fill="none" stroke="#C9A84C" stroke-width="5"/>
+      <path d="M108,68 L392,68 L392,338 Q392,452 250,514 Q108,452 108,338 Z" fill="none" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+      <line x1="250" y1="118" x2="250" y2="522" stroke="#C9A84C" stroke-width="2.5" clip-path="url(#sc3)"/>
+      <line x1="108" y1="290" x2="392" y2="290" stroke="#C9A84C" stroke-width="2.5"/>
+      <path d="M100,60 L400,60 L400,118 L100,118 Z" fill="none" stroke="#C9A84C" stroke-width="4"/>
+      <!-- Central roundel -->
+      <circle cx="250" cy="290" r="24" fill="#0a1020" stroke="#C9A84C" stroke-width="2.5"/>
+      <circle cx="250" cy="290" r="16" fill="none" stroke="#C9A84C" stroke-width="1"/>
+      <text x="250" y="296" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#C9A84C">✦</text>
+      <!-- Laurels -->
+      <g fill="none" stroke-linecap="round">
+        <path d="M92,155 Q68,230 62,320" stroke="#3B6D11" stroke-width="2"/>
+        <ellipse cx="79" cy="178" rx="16" ry="7" transform="rotate(-55,79,178)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        <ellipse cx="71" cy="212" rx="16" ry="7" transform="rotate(-48,71,212)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        <ellipse cx="66" cy="248" rx="16" ry="7" transform="rotate(-38,66,248)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        <ellipse cx="63" cy="285" rx="16" ry="7" transform="rotate(-22,63,285)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        <ellipse cx="63" cy="315" rx="16" ry="7" transform="rotate(-8,63,315)"  fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        <path d="M408,155 Q432,230 438,320" stroke="#3B6D11" stroke-width="2"/>
+        <ellipse cx="421" cy="178" rx="16" ry="7" transform="rotate(55,421,178)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        <ellipse cx="429" cy="212" rx="16" ry="7" transform="rotate(48,429,212)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        <ellipse cx="434" cy="248" rx="16" ry="7" transform="rotate(38,434,248)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        <ellipse cx="437" cy="285" rx="16" ry="7" transform="rotate(22,437,285)" fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        <ellipse cx="437" cy="315" rx="16" ry="7" transform="rotate(8,437,315)"  fill="#639922" stroke="#3B6D11" stroke-width="0.8"/>
+        <path d="M62,320 Q250,385 438,320" stroke="#3B6D11" stroke-width="1.5" fill="none"/>
+      </g>
+      <!-- Scroll -->
+      <path d="M55,548 Q44,537 55,526 Q66,537 77,526 L77,553 Q66,564 55,553 Z" fill="#8B6010"/>
+      <path d="M55,546 Q44,535 55,524 Q66,535 77,524 L77,551 Q66,562 55,551 Z" fill="#C9A84C"/>
+      <rect x="77" y="526" width="346" height="28" fill="#8B6010"/>
+      <rect x="77" y="524" width="346" height="26" fill="#C9A84C"/>
+      <path d="M423,548 Q434,537 445,548 Q456,537 445,526 L423,526 L423,553 Z" fill="#8B6010"/>
+      <path d="M423,546 Q434,535 443,546 Q454,535 443,524 L423,524 L423,551 Z" fill="#C9A84C"/>
+      <line x1="77" y1="530" x2="423" y2="530" stroke="#8B6010" stroke-width="0.8"/>
+      <line x1="77" y1="544" x2="423" y2="544" stroke="#8B6010" stroke-width="0.8"/>
+      <text x="250" y="541" text-anchor="middle" font-family="Palatino Linotype,Palatino,Georgia,serif" font-size="12.5" font-weight="700" fill="#0a1020" letter-spacing="1.5">Stacey · Caleb · Grace · Emily · Maddie</text>
+      <text x="116" y="107" font-family="Georgia,serif" font-size="18" fill="#C9A84C" opacity="0.7">❧</text>
+      <text x="384" y="107" font-family="Georgia,serif" font-size="18" fill="#C9A84C" opacity="0.7" text-anchor="end">❧</text>
+    </svg>
+  </div>
+</div>
+
+<script>
+const DAYS  =["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const DOWS  =["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const TODAY =new Date();TODAY.setHours(0,0,0,0);
+let viewDate=new Date(TODAY),currentPerson="Grace";
+function dateKey(d){return`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`}
+function loadDone(p,d){try{return JSON.parse(localStorage.getItem(`fc_${p}_${dateKey(d)}`)||"[]")}catch{return[]}}
+function saveDone(p,d,a){try{localStorage.setItem(`fc_${p}_${dateKey(d)}`,JSON.stringify(a))}catch{}}
+function getRotation(d){const j=new Date(2026,0,5);const w=Math.floor((d-j)/(7*86400000));return["A","B","C"][((w%3)+3)%3]}
+function uid(n){return btoa(encodeURIComponent(n)).replace(/=/g,"")}
+const deepClean={A:"Grace",B:"Maddie",C:"Emily"};
+const mopPerson={A:"Grace",B:"Maddie",C:"Emily"};
+function buildChores(person,date){
+  const D=DAYS[date.getDay()],R=getRotation(date),dc=deepClean[R],mp=mopPerson[R];
+  const on=days=>days.includes(D);
+  const raw={
+    Grace:[
+      {section:"Pet care",items:[
+        on(["Monday","Wednesday","Friday","Sunday"])&&{name:"Feed Livie — morning",freq:"today"},
+        on(["Tuesday","Thursday","Saturday"])&&{name:"Feed Livie — evening",freq:"today"},
+        on(["Monday","Wednesday","Friday","Sunday"])&&{name:"Wash Livie's bowls",freq:"today"},
+      ]},
+      {section:"Kitchen",items:[
+        R==="A"&&{name:"Unload dishwasher",freq:"your week"},
+        R==="B"&&{name:"Load dishwasher / wipe sink",freq:"your week"},
+        on(["Monday","Wednesday","Friday"])&&{name:"Wipe kitchen counters",freq:"today"},
+        on(["Wednesday"])&&{name:"Wash kitchen towels & linens",freq:"weekly"},
+        on(["Wednesday"])&&{name:"Wipe microwave inside & out",freq:"weekly"},
+        on(["Monday","Friday"])&&{name:"Hand-wash pots & pans",freq:"today"},
+      ]},
+      {section:"Cleaning",items:[
+        (R==="C"&&on(["Tuesday","Thursday","Saturday"]))&&{name:"Sweep common areas",freq:"your week"},
+        (dc==="Grace"&&on(["Saturday"]))&&{name:"Deep clean bathroom",freq:"your week"},
+        (mp==="Grace"&&on(["Saturday"]))&&{name:"Mop floors",freq:"your week"},
+        on(["Saturday"])&&{name:"Wipe light switches & doorknobs",freq:"weekly"},
+        on(["Saturday"])&&{name:"Clean Livie's area & bed",freq:"weekly"},
+      ]},
+      {section:"Trash & recycling",items:[
+        on(["Tuesday"])&&{name:"Empty indoor trash cans",freq:"today"},
+        on(["Wednesday"])&&{name:"Put recycling out",freq:"weekly"},
+      ]},
+      {section:"Personal",items:[
+        on(["Monday"])&&{name:"Personal laundry (wash, dry, put away)",freq:"weekly"},
+        {name:"Make bed",freq:"daily"},
+      ]},
+    ],
+    Maddie:[
+      {section:"Kitchen",items:[
+        R==="B"&&{name:"Unload dishwasher",freq:"your week"},
+        R==="C"&&{name:"Load dishwasher / wipe sink",freq:"your week"},
+        on(["Wednesday"])&&{name:"Wipe kitchen counters",freq:"today"},
+        on(["Wednesday"])&&{name:"Wipe microwave inside & out",freq:"weekly"},
+      ]},
+      {section:"Cleaning",items:[
+        (R==="A"&&on(["Tuesday","Thursday","Saturday"]))&&{name:"Sweep common areas",freq:"your week"},
+        (dc==="Maddie"&&on(["Saturday"]))&&{name:"Deep clean bathroom",freq:"your week"},
+        (mp==="Maddie"&&on(["Saturday"]))&&{name:"Mop floors",freq:"your week"},
+        on(["Friday"])&&{name:"Vacuum living areas",freq:"weekly"},
+        on(["Saturday"])&&{name:"Wipe light switches & doorknobs",freq:"weekly"},
+      ]},
+      {section:"Laundry",items:[on(["Saturday"])&&{name:"Fold & put away shared towels",freq:"weekly"}]},
+      {section:"Trash",items:[on(["Saturday"])&&{name:"Empty indoor trash cans",freq:"today"}]},
+      {section:"Personal",items:[
+        on(["Tuesday"])&&{name:"Personal laundry (wash, dry, put away)",freq:"weekly"},
+        {name:"Make bed",freq:"daily"},
+      ]},
+    ],
+    Emily:[
+      {section:"Pet care",items:[
+        on(["Tuesday","Thursday","Saturday"])&&{name:"Feed Livie — morning",freq:"today"},
+        on(["Monday","Wednesday","Friday","Sunday"])&&{name:"Feed Livie — evening",freq:"today"},
+      ]},
+      {section:"Kitchen",items:[
+        R==="C"&&{name:"Unload dishwasher",freq:"your week"},
+        R==="A"&&{name:"Load dishwasher / wipe sink",freq:"your week"},
+        on(["Friday"])&&{name:"Wipe kitchen counters",freq:"today"},
+        on(["Wednesday"])&&{name:"Wipe microwave inside & out",freq:"weekly"},
+      ]},
+      {section:"Cleaning",items:[
+        (R==="B"&&on(["Tuesday","Thursday","Saturday"]))&&{name:"Sweep common areas",freq:"your week"},
+        (dc==="Emily"&&on(["Saturday"]))&&{name:"Deep clean bathroom",freq:"your week"},
+        (mp==="Emily"&&on(["Saturday"]))&&{name:"Mop floors",freq:"your week"},
+        on(["Saturday"])&&{name:"Wipe light switches & doorknobs",freq:"weekly"},
+      ]},
+      {section:"Laundry",items:[on(["Sunday"])&&{name:"Fold & put away shared towels",freq:"weekly"}]},
+      {section:"Trash",items:[
+        on(["Thursday"])&&{name:"Bring trash cans in from curb",freq:"every Thursday"},
+        on(["Thursday"])&&{name:"Empty indoor trash cans",freq:"today"},
+      ]},
+      {section:"Personal",items:[
+        on(["Wednesday"])&&{name:"Personal laundry (wash, dry, put away)",freq:"weekly"},
+        {name:"Make bed",freq:"daily"},
+      ]},
+    ],
+    Caleb:[
+      {section:"Kitchen",items:[
+        on(["Monday","Wednesday","Friday","Sunday"])&&{name:"Hand-wash pots & pans",freq:"today"},
+        on(["Monday","Thursday"])&&{name:"Wipe down stovetop",freq:"today"},
+      ]},
+      {section:"Cleaning",items:[
+        on(["Sunday"])&&{name:"Vacuum living areas",freq:"weekly"},
+        on(["Sunday"])&&{name:"Dust furniture & surfaces",freq:"weekly"},
+      ]},
+      {section:"Outdoor & garage",items:[
+        on(["Sunday"])&&{name:"Tidy garage / outdoor area",freq:"weekly"},
+        on(["Saturday"])&&{name:"Yardwork (mow, edge, trim)",freq:"as needed"},
+      ]},
+      {section:"Trash",items:[on(["Wednesday"])&&{name:"Take trash cans to curb tonight",freq:"every Wednesday"}]},
+      {section:"Car",items:[on(["Sunday"])&&{name:"Clean inside of car (whole family)",freq:"weekly"}]},
+      {section:"Personal",items:[
+        on(["Friday"])&&{name:"Personal laundry (wash, dry, put away)",freq:"weekly"},
+        {name:"Make bed",freq:"daily"},
+      ]},
+    ],
+    Stacey:[
+      {section:"Kitchen",items:[on(["Saturday"])&&{name:"Wipe fridge shelves & handles",freq:"weekly"}]},
+      {section:"Plants",items:[on(["Monday","Thursday"])&&{name:"Water plants",freq:"today"}]},
+      {section:"Personal",items:[
+        on(["Thursday"])&&{name:"Personal laundry (wash, dry, put away)",freq:"weekly"},
+        {name:"Make bed",freq:"daily"},
+      ]},
+    ],
+  };
+  return(raw[person]||[]).map(s=>({section:s.section,items:s.items.filter(Boolean)})).filter(s=>s.items.length>0);
+}
+const ACCENTS={
+  Grace: {acc:"var(--grace-acc)",bg:"var(--grace-bg)",text:"var(--grace-text)"},
+  Maddie:{acc:"var(--maddie-acc)",bg:"var(--maddie-bg)",text:"var(--maddie-text)"},
+  Emily: {acc:"var(--emily-acc)",bg:"var(--emily-bg)",text:"var(--emily-text)"},
+  Caleb: {acc:"var(--caleb-acc)",bg:"var(--caleb-bg)",text:"var(--caleb-text)"},
+  Stacey:{acc:"var(--stacey-acc)",bg:"var(--stacey-bg)",text:"var(--stacey-text)"},
+};
+function dotColor(p){return{Grace:"#639922",Maddie:"#378ADD",Emily:"#EF9F27",Caleb:"#7F77DD",Stacey:"#D4537E"}[p]}
+function buildStrip(){
+  const strip=document.getElementById("day-strip");
+  const offset=Math.round((viewDate-TODAY)/86400000);
+  strip.innerHTML="";
+  for(let i=offset-3;i<=offset+3;i++){
+    const d=new Date(TODAY);d.setDate(TODAY.getDate()+i);
+    const isToday=i===0,isSelected=dateKey(d)===dateKey(viewDate);
+    const secs=buildChores(currentPerson,d);
+    const total=secs.reduce((a,s)=>a+s.items.length,0);
+    const done=loadDone(currentPerson,d).length;
+    const allDone=total>0&&done===total,hasSome=done>0&&!allDone;
+    const a=ACCENTS[currentPerson];
+    const pill=document.createElement("div");
+    pill.className="day-pill"+(isToday?" today":"")+(isSelected?" selected":"");
+    if(isSelected){pill.style.setProperty("--acc",a.acc);pill.style.setProperty("--acc-bg",a.bg);pill.style.setProperty("--acc-text",a.text)}
+    pill.innerHTML=`<span class="pill-dow">${DOWS[d.getDay()]}</span><span class="pill-date">${d.getDate()}</span><div class="dot-row">${allDone?`<div class="dot" style="background:${dotColor(currentPerson)}"></div>`:hasSome?`<div class="dot" style="background:${dotColor(currentPerson)};opacity:.4"></div>`:""}</div>`;
+    pill.addEventListener("click",()=>{viewDate=d;updateAll()});
+    strip.appendChild(pill);
+  }
+}
+function shiftDay(delta){viewDate=new Date(viewDate);viewDate.setDate(viewDate.getDate()+delta);updateAll()}
+function render(){
+  const sections=buildChores(currentPerson,viewDate);
+  const done=loadDone(currentPerson,viewDate);
+  const total=sections.reduce((a,s)=>a+s.items.length,0);
+  const doneCount=done.length;
+  const pct=total?Math.round(doneCount/total*100):0;
+  const isToday=dateKey(viewDate)===dateKey(TODAY);
+  const isFuture=viewDate>TODAY;
+  document.getElementById("prog-fill").className=`progress-fill fill-${currentPerson}`;
+  document.getElementById("prog-fill").style.width=pct+"%";
+  document.getElementById("prog-count").textContent=total?`${doneCount} / ${total}`:"";
+  document.getElementById("prog-label").textContent=isToday?"Today":`${DAYS[viewDate.getDay()]}, ${MONTHS[viewDate.getMonth()]} ${viewDate.getDate()}`;
+  document.getElementById("week-badge").textContent=`Week ${getRotation(viewDate)} rotation`;
+  const content=document.getElementById("content");
+  if(total===0){content.innerHTML=`<div class="empty-state"><i class="ti ti-sun-off" aria-hidden="true"></i><p>Nothing scheduled${isToday?" today":" this day"}!</p></div>`;return}
+  if(!isFuture&&doneCount===total){content.innerHTML=`<div class="all-done"><span class="trophy">🎉</span><h2>All done, ${currentPerson}!</h2><p>${isToday?"Great work today.":"This day is complete."}</p></div>`;return}
+  let html="";
+  sections.forEach(({section,items})=>{
+    html+=`<div class="section-label">${section}</div>`;
+    items.forEach(({name,freq})=>{
+      const id=uid(name),isDone=done.includes(id);
+      const ft=isFuture?`<span class="future-tag">upcoming</span>`:"";
+      html+=`<div class="chore-item${isDone?" done done-"+currentPerson:""}" onclick="toggle('${id}')" role="checkbox" aria-checked="${isDone}" tabindex="0"><div class="cb-ring"><i class="ti ti-check" aria-hidden="true"></i></div><span class="chore-name">${name}${ft}</span>${freq?`<span class="chore-freq">${freq}</span>`:""}</div>`;
+    });
+  });
+  content.innerHTML=html;
+}
+function toggle(id){let done=loadDone(currentPerson,viewDate);done=done.includes(id)?done.filter(d=>d!==id):[...done,id];saveDone(currentPerson,viewDate,done);updateAll()}
+function resetDay(){const isToday=dateKey(viewDate)===dateKey(TODAY);if(confirm(`Reset ${currentPerson}'s checklist for ${isToday?"today":DAYS[viewDate.getDay()]}?`)){saveDone(currentPerson,viewDate,[]);updateAll()}}
+function updateAll(){buildStrip();render()}
+document.querySelectorAll(".tab").forEach(tab=>{tab.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));tab.classList.add("active");currentPerson=tab.dataset.p;updateAll()})});
+updateAll();
+</script>
+</body>
+</html>
